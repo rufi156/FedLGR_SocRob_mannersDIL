@@ -170,7 +170,7 @@ class FlowerClient_LGR(fl.client.NumPyClient):
 		# else:
 		# 	# loss, avg_pearson, avg_rmse = test(self.net, self.testloader, self.y_labels, self.DEVICE)
 		# 	loss, avg_pearson, avg_rmse = test(self.strat.model, self.testloader, self.y_labels, self.DEVICE)
-
+		torch.save(self.strat.model.state_dict(), f'{self.path}/fullmod{self.cid}.pth')
 		num_tasks = 6
 		rounds_per_task = int(self.nrounds / num_tasks)
 		current_task = (config["server_round"] - 1) // rounds_per_task
