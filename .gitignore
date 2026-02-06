@@ -161,3 +161,8 @@ cython_debug/
 
 # Virtualenv
 venv
+
+
+#saved models
+*.pkl
+*.pth
