@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# Training input and output
+Data/
+Output/
+
 # Distribution / packaging
 .Python
 build/
