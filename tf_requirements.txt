@@ -1,0 +1,7 @@
+# TensorFlow ecosystem (Python 3.10)
+tensorboard==2.15.0
+tensorflow-estimator==2.15.0
+tensorflow-io-gcs-filesystem==0.32.0
+tensorflow-probability==0.23.0
+tensorboard-data-server
+tensorboard-plugin-wit==1.8.1
