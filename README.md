@@ -8,6 +8,9 @@
 7. pip install ipykernel
 8. python -m ipykernel install --user --name lgr --display-name "lgr (py310)"
 
+```bash
+conda create -n lgr python=3.10 && conda activate lgr && pip install "flwr[simulation]==1.7.0" && pip install "tensorflow==2.15.0" && pip install -r tf_requirements.txt && pip install -r base_requirements.txt && pip install "protobuf>=4.25.2,<5.0.0" && pip install ipykernel && python -m ipykernel install --user --name lgr --display-name "lgr (py310)"
+```
 
 
 
