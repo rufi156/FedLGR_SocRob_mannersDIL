@@ -43,7 +43,7 @@ class Net(nn.Module):
 	def __init__(self):
 		super(Net, self).__init__()
 		self.conv_module = conv()
-		self.fc_module = FCNet(num_classes=8)
+		self.fc_module = FCNet(num_classes=9)
 	
 	def forward(self, x):
 		x = self.conv_module(x)
