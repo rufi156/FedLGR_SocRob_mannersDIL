@@ -189,7 +189,7 @@ def run(args):
         if gpu_flag == 1:
             client_res = {"num_gpus": num_GPUs / n_cl, "num_cpus": num_CPUs}
         else:
-            client_res = {"num_gpus": num_GPUs, "num_cpus": num_CPUs / n_cl}
+            client_res = {"num_gpus": num_GPUs, "num_cpus": num_CPUs}
 
         if not os.path.exists(f"{args.output}/{n_cl}"):
             os.mkdir(f"{args.output}/{n_cl}")
