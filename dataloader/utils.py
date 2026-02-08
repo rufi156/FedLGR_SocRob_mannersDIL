@@ -2,11 +2,12 @@ import pandas as pd
 import os
 import torchvision.transforms as transforms
 from .imageloader import CustomDataset
-from torch.utils.data import random_split, DataLoader
+from torch.utils.data import random_split, DataLoader, ConcatDataset
 import torch
 import numpy as np
 import sys
 from sklearn.utils import shuffle
+import h5py
 
 sys.path.append('..')
 from utils import predict_gen, train, predict_gen_distil
@@ -219,3 +220,123 @@ def task_splitter(path, n_clients, aug, batch_size=16):
 	# all_test_loader: DataLoader
 	# y_labels: column names
 	return train_task_cl, incremental_test_loaders, all_test_loader, y_labels
+
+
+def hdf5_task_splitter(path, n_clients, aug, batch_size=16):
+    """
+    HDF5-based tasksplitter.
+
+    - Uses ../data/mean_data_pepper.hdf5 (or `path`).
+    - Tasks = domains: ['Home', 'BigOffice-2', 'BigOffice-3', 'Hallway', 'MeetingRoom', 'SmallOffice'].
+    - For each domain:
+        * train: {domain}/train/labels
+        * test:  {domain}/test/labels
+    - Returns:
+        * traintaskcl: list[tasks] of list[n_clients] of DataLoaders over domain-specific train splits.
+        * valloaders:  list[tasks] of DataLoaders over per-domain test splits (not cumulative).
+        * testloader:  DataLoader over joint test set (all domains concatenated).
+        * ylabels:     list of 9 action names (for metrics only).
+    """
+
+    hdf5_path = path or "../data/mean_data_pepper.hdf5"
+
+    # 9 regression outputs in fixed order
+    ylabels = [
+        "Vaccum Cleaning", "Mopping the Floor", "Carry Warm Food",
+        "Carry Cold Food", "Carry Drinks", "Carry Small Objects",
+        "Carry Large Objects", "Cleaning", "Starting a conversation",
+    ]
+
+    # HDF5 images are already resized/normalized; keep transforms None
+    traintransform = None
+    testtransform = None
+
+    # Discover domains and sample counts
+    with h5py.File(hdf5_path, "r") as f:
+		domains = ['Home', 'BigOffice-2', 'BigOffice-3', 'Hallway', 'MeetingRoom', 'SmallOffice']
+
+        # Prepare index info per domain
+        train_counts = {}
+        test_counts = {}
+        for domain in domains:
+            dom_grp = f[domain]
+
+            # TRAIN
+            n_train = dom_grp["train/labels"].shape[0]
+            train_counts[domain] = n_train
+
+            # TEST
+            n_test = dom_grp["test/labels"].shape[0]
+            test_counts[domain] = n_test
+
+    # --- Build train loaders per task (domain), per client ---
+    traintaskcl = []
+    for domain in domains:
+        n_train = train_counts[domain]
+
+        # Shuffle indices per domain
+        all_indices = list(range(n_train))
+
+        # Simple deterministic shuffling, or you can use random.Random(seed).shuffle(...)
+        import random
+        random.Random(42).shuffle(all_indices)
+
+        samples_per_client = n_train // n_clients
+        client_loaders = []
+        for c in range(n_clients):
+            start = c * samples_per_client
+            end = (c + 1) * samples_per_client if c < n_clients - 1 else n_train
+            client_indices = all_indices[start:end]
+
+            ds = CustomDataset(
+                hdf5_path=hdf5_path,
+                domain=domain,
+                split="train",
+                indices=client_indices,
+                image_variant="image_path",
+                transform=traintransform,
+            )
+            loader = DataLoader(ds, batch_size=batch_size, shuffle=True, drop_last=False)
+            client_loaders.append(loader)
+
+        traintaskcl.append(client_loaders)
+
+    # --- Build per-domain validation loaders (no cumulative) ---
+    valloaders = []
+    for domain in domains:
+        n_test = test_counts[domain]
+		indices = list(range(n_test))
+		ds = CustomDataset(
+			hdf5_path=hdf5_path,
+			domain=domain,
+			split="test",
+			indices=indices,
+			image_variant="image_path",
+			transform=testtransform,
+		)
+		loader = DataLoader(ds, batch_size=batch_size, shuffle=False, drop_last=False)
+
+        valloaders.append(loader)
+
+    # --- Build joint testloader over all domains ---
+    test_datasets = []
+    for domain in domains:
+        n_test = test_counts[domain]
+
+        indices = list(range(n_test))
+        ds = CustomDataset(
+            hdf5_path=hdf5_path,
+            domain=domain,
+            split="test",
+            indices=indices,
+            image_variant="image_path",
+            transform=testtransform,
+        )
+        test_datasets.append(ds)
+
+    joint_dataset = ConcatDataset(test_datasets)
+
+    testloader = DataLoader(joint_dataset, batch_size=batch_size, shuffle=False, drop_last=False)
+
+    return traintaskcl, valloaders, testloader, ylabels
+

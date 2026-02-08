@@ -2,7 +2,7 @@ import argparse
 
 from client.fedRoot import FlowerClient_LGR
 from models.GenNet import VAE
-from dataloader.utils import task_splitter_circle_arrow, task_splitter
+from dataloader.utils import task_splitter_circle_arrow, task_splitter, hdf5_task_splitter
 from server.strategies import FedAvgWithAccuracyMetric
 import ray
 import flwr as fl
@@ -182,7 +182,7 @@ def run(args):
         if not os.path.exists(f"{args.output}/{n_cl}"):
             os.mkdir(f"{args.output}/{n_cl}")
 
-        trainloaders, valloaders, testloader, y_labels = task_splitter(path=args.path, n_clients=n_cl, aug=args.aug, batch_size=args.batch_size)
+        trainloaders, valloaders, testloader, y_labels = hdf5_task_splitter(path=args.path, n_clients=n_cl, aug=args.aug, batch_size=args.batch_size)
         print_memory_usage("after loading dataloaders")
 
         if args.strategy_fl == 'all':
