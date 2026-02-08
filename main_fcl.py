@@ -42,17 +42,34 @@ def run_strategy(strategy, strategy_name, coeff, client_fn, clients, rounds, epo
         data = pd.read_csv(f"{output}/{clients}_{rounds}_{epochs}_{aug}_decentral.csv")
         data.drop(["Unnamed: 0"], axis=1, inplace=True)
     except:
-        data = pd.DataFrame(columns=["Method", "reg_coeff", "Loss1", "RMSE1", "PCC1", "Loss2", "RMSE2", "PCC2"])
-    
-    data = pd.concat(
-        [data, pd.Series([f"{strategy_name}", f"{coeff}", truncate_float(history.losses_distributed[int(rounds / 2) - 1][-1],4),
-                            truncate_float(history.metrics_distributed['avg_rmse'][int(rounds / 2) - 1][-1],4),
-                            truncate_float(history.metrics_distributed['avg_pearson_score'][int(rounds / 2) - 1][-1],4),
-                            truncate_float(history.losses_distributed[-1][-1],4),
-                            truncate_float(history.metrics_distributed['avg_rmse'][-1][-1],4),
-                            truncate_float(history.metrics_distributed['avg_pearson_score'][-1][-1],4)], index=data.columns).to_frame().T])
-    
-    data.to_csv(f"{output}/{clients}_{rounds}_{epochs}_{aug}_decentral.csv")
+        data = pd.DataFrame(columns=["Method", "reg_coeff", "Task", "Loss", "RMSE", "PCC"])
+
+    # Assume number of tasks = 6
+    num_tasks = 6
+    rounds_per_task = int(rounds / num_tasks)
+
+    for task_id in range(num_tasks):
+        # Round index closest to the end of the task period for distributed metrics
+        round_idx = (task_id + 1) * rounds_per_task - 1
+
+        # Access and truncate metrics for this task round
+        loss = truncate_float(history.losses_distributed[round_idx][-1], 4)
+        rmse = truncate_float(history.metrics_distributed['avg_rmse'][round_idx][-1], 4)
+        pcc = truncate_float(history.metrics_distributed['avg_pearson_score'][round_idx][-1], 4)
+
+        # Append each task as a new row
+        data = pd.concat([
+            data, 
+            pd.Series([
+                strategy_name, 
+                coeff, 
+                task_id + 1,  # Task indexing from 1
+                loss, 
+                rmse,
+                pcc
+                ], index=data.columns).to_frame().T])
+
+    data.to_csv(f"{output}/{clients}_{rounds}_{epochs}_{aug}_decentral.csv", index=False)
 
     try:
         try:
@@ -218,7 +235,7 @@ def run(args):
                             agent_config = {'lr': 0.001, 'momentum': 0.1, 'weight_decay': 0.01,
                                             'schedule': [int(args.epochs)],
                                             'model_type': 'mode', 'model_name': 'model', 'model_weights': '',
-                                            'out_dim': {'All': 8},
+                                            'out_dim': {'All': 9},
                                             'optimizer': 'Adam', 'print_freq': 0, 'gpuid': [gpu_flag],
                                             'reg_coef': coeff}
 
