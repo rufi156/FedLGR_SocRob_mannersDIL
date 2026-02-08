@@ -508,3 +508,7 @@ if __name__ == "__main__":
 
 # Run FedAvg EWC with 2 clients 2 rounds 1 epoch
 # python main_fcl.py -sfl FedRoot -scl LGR -m MobileNet -r 1000 -n 2 -e 1 -c 2 -f 2 -p SADRA-Dataset -o output -a False -t cpu -b FedAvg
+
+# Run 30 rounds/6tasks - 5 rounds per task as per paper
+# adapted to use hdf5 datasets and run for each fold
+# python main_fcl.py -sfl FedRoot -scl LGR -m MobileNet -n 30 -e 10 -c 10 -f 10 -p Data/mean_data_pepper_fold0.hdf5 -o Output -a False -t cpu
