@@ -1000,7 +1000,7 @@ class LatentGenerativeReplay(nn.Module):
 		ramu = RAMU()
 		peak_ram = max(peak_ram, ramu.compute("TRAINING"))
 		if self.task_count == 0:
-			print(" ............................................................................ Learning LGR Task 1")
+			print(" ............................................................................ Learning LGR Task 0")
 			# Config the model and optimizer
 			self.model.train()
 			params = [{'params': self.model.conv_module.parameters(), 'lr': 0.00001}, {'params': self.model.fc_module.parameters(), 'lr': 0.001}]
@@ -1041,7 +1041,7 @@ class LatentGenerativeReplay(nn.Module):
 				print(f"Epoch {epoch + 1}/{self.config['schedule'][-1]}, Loss: {losses.avg}")
 		
 		else:
-			print(" ............................................................................ Learning LGR Task 2")
+			print(f" ............................................................................ Learning LGR Task {self.task_count}")
 			
 			# train(self.model.fc_module, train_loader, self.Device, self.config['schedule'][-1])
 			mixed_task_data = self.latent_creator(train_loader)
