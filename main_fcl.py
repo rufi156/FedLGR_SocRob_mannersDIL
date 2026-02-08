@@ -4,7 +4,7 @@ from CL.default import EWC
 from client.default import FlowerClientCL, FlowerClient_NR
 from client.fedRoot import FlowerClientCL_Root, FlowerClient_NR_Root, FlowerClient_LGR
 from models.GenNet import VAE
-from dataloader.utils import task_splitter_circle_arrow
+from dataloader.utils import task_splitter_circle_arrow, hdf5_task_splitter
 from server.strategies import FedAvgWithAccuracyMetric
 import ray
 import flwr as fl
@@ -177,7 +177,7 @@ def run(args):
         if not os.path.exists(f"{args.output}/{n_cl}"):
             os.mkdir(f"{args.output}/{n_cl}")
 
-        trainloaders, valloaders, testloader, y_labels = task_splitter_circle_arrow(path=args.path, n_clients=n_cl, aug=args.aug, batch_size=args.batch_size)
+        trainloaders, valloaders, testloader, y_labels = hdf5_task_splitter(path=args.path, n_clients=n_cl, aug=args.aug, batch_size=args.batch_size)
         
 
         if args.strategy_fl == 'all':
