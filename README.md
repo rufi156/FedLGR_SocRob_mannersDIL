@@ -1,12 +1,12 @@
 # Setup
-1. Env setup with Python 3.10
+1. conda create -n lgr python=3.10
 2. pip install "flwr[simulation]==1.7.0"
 3. pip install "tensorflow==2.15.0"
 4. pip install -r tf_requirements.txt
 5. pip install -r base_requirements.txt
 6. pip install "protobuf>=4.25.2,<5.0.0" (in case TensorFlow pulled protobuf==4.23.x)
 7. pip install ipykernel
-8. python -m ipykernel install --user --name lgr_flwr17 --display-name "lgr_flwr17 (py310)"
+8. python -m ipykernel install --user --name lgr --display-name "lgr (py310)"
 
 
 
