@@ -44,32 +44,32 @@ def run_strategy(strategy, strategy_name, coeff, client_fn, clients, rounds, epo
     except:
         data = pd.DataFrame(columns=["Method", "reg_coeff", "Task", "Loss", "RMSE", "PCC"])
 
-    # Assume number of tasks = 6
-    num_tasks = 6
-    rounds_per_task = int(rounds / num_tasks)
+        # Assume number of tasks = 6
+        num_tasks = 6
+        rounds_per_task = int(rounds / num_tasks)
 
-    for task_id in range(num_tasks):
-        # Round index closest to the end of the task period for distributed metrics
-        round_idx = (task_id + 1) * rounds_per_task - 1
+        for task_id in range(num_tasks):
+            # Round index closest to the end of the task period for distributed metrics
+            round_idx = (task_id + 1) * rounds_per_task - 1
 
-        # Access and truncate metrics for this task round
-        loss = truncate_float(history.losses_distributed[round_idx][-1], 4)
-        rmse = truncate_float(history.metrics_distributed['avg_rmse'][round_idx][-1], 4)
-        pcc = truncate_float(history.metrics_distributed['avg_pearson_score'][round_idx][-1], 4)
+            # Access and truncate metrics for this task round
+            loss = truncate_float(history.losses_distributed[round_idx][-1], 4)
+            rmse = truncate_float(history.metrics_distributed['avg_rmse'][round_idx][-1], 4)
+            pcc = truncate_float(history.metrics_distributed['avg_pearson_score'][round_idx][-1], 4)
 
-        # Append each task as a new row
-        data = pd.concat([
-            data, 
-            pd.Series([
-                strategy_name, 
-                coeff, 
-                task_id + 1,  # Task indexing from 1
-                loss, 
-                rmse,
-                pcc
-                ], index=data.columns).to_frame().T])
+            # Append each task as a new row
+            data = pd.concat([
+                data, 
+                pd.Series([
+                    strategy_name, 
+                    coeff, 
+                    task_id + 1,  # Task indexing from 1
+                    loss, 
+                    rmse,
+                    pcc
+                    ], index=data.columns).to_frame().T])
 
-    data.to_csv(f"{output}/{clients}_{rounds}_{epochs}_{aug}_decentral.csv", index=False)
+        data.to_csv(f"{output}/{clients}_{rounds}_{epochs}_{aug}_decentral.csv", index=False)
 
     try:
         try:
