@@ -863,6 +863,7 @@ class LatentGenerativeReplay(nn.Module):
 		# batch_size = 1
 		new_data = CustomOutputDataset(new_pairs)
 		new_data_loader = DataLoader(new_data, batch_size=batch_size, shuffle=True, drop_last=True)
+		assert len(new_data_loader) != 0, f"Created an empty dataloader {len(new_data_loader)=}. {len(new_data)=} data with {batch_size=} with drop_last=True"
 		return new_data_loader
 	
 	def predict_from_gen(self, net, num_samples, DEVICE, batch_size):
