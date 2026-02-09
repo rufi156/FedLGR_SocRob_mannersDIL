@@ -17,10 +17,6 @@ def weighted_avg(results: List[Tuple[int, float, Optional[float]]]) -> float:
 
 
 class FedAvgWithAccuracyMetric(fl.server.strategy.FedAvg):
-	def __init__(self, *args, **kwargs):
-		kwargs.setdefault("fraction_evaluate", 0.0)
-		super().__init__(*args, **kwargs)
-		
 	def aggregate_evaluate(self,
 						   rnd: int,
 						   results: List[Tuple[ClientProxy, EvaluateRes]],
