@@ -233,7 +233,7 @@ def run(args):
                                 os.mkdir(f"{output_reg}")
 
                             agent_config = {'lr': 0.001, 'momentum': 0.1, 'weight_decay': 0.01,
-                                            'schedule': [int(args.epochs)],
+                                            'schedule': [int(args.epochs)], 'batch_size': args.batch_size,
                                             'model_type': 'mode', 'model_name': 'model', 'model_weights': '',
                                             'out_dim': {'All': 9},
                                             'optimizer': 'Adam', 'print_freq': 0, 'gpuid': [gpu_flag],
@@ -289,7 +289,7 @@ def run(args):
                                 os.mkdir(f"{output_NR}")
 
                             agent_config = {'lr': 0.001, 'momentum': 0.1, 'weight_decay': 0.01,
-                                            'schedule': [int(args.epochs)],
+                                            'schedule': [int(args.epochs)], 'batch_size': args.batch_size,
                                             'model_type': 'mode', 'model_name': 'model', 'model_weights': '',
                                             'out_dim': {'All': 8},
                                             'optimizer': 'Adam', 'print_freq': 0, 'gpuid': [gpu_flag],
@@ -341,7 +341,7 @@ def run(args):
                             if not os.path.exists(output_root_reg):
                                 os.mkdir(f"{output_root_reg}")
                             agent_config = {'lr': 0.0001, 'momentum': 0.1, 'weight_decay': 0.01,
-                                            'schedule': [int(args.epochs)],
+                                            'schedule': [int(args.epochs)], 'batch_size': args.batch_size,
                                             'model_type': 'mode', 'model_name': 'model', 'model_weights': '',
                                             'out_dim': {'All': 8}, 'optimizer':
                                                 'Adam', 'print_freq': 0, 'gpuid': [gpu_flag], 'reg_coef': coeff}
@@ -387,7 +387,7 @@ def run(args):
                             if not os.path.exists(output_root_NR):
                                 os.mkdir(f"{output_root_NR}")
                             agent_config = {'lr': 0.0001, 'momentum': 0.1, 'weight_decay': 0.01,
-                                            'schedule': [int(args.epochs)],
+                                            'schedule': [int(args.epochs)], 'batch_size': args.batch_size,
                                             'model_type': 'mode', 'model_name': 'model', 'model_weights': '',
                                             'out_dim': {'All': 8},
                                             'optimizer': 'Adam', 'print_freq': 0, 'gpuid': [gpu_flag],
@@ -421,7 +421,7 @@ def run(args):
                             savecomp(f"{output}", buffer_size, rambef, ramaf, cpubef, cpuaf, gpubeff, gpuaf)
                     elif strat_cl == 'LGR':
                         agent_config = {'lr': 0.001, 'momentum': 0.1, 'weight_decay': 0.01,
-                                        'schedule': [int(args.epochs)],
+                                        'schedule': [int(args.epochs)], 'batch_size': args.batch_size,
                                         'model_type': 'mode', 'model_name': 'model', 'model_weights': '',
                                         'out_dim': {'All': 8},
                                         'optimizer': 'Adam', 'print_freq': 0, 'gpuid': [gpu_flag], 'reg_coef': 0.01}

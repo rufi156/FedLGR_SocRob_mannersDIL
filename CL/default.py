@@ -850,7 +850,7 @@ class LatentGenerativeReplay(nn.Module):
 	def set_generator_weights(self, weights):
 		self.generator.load_state_dict(weights)
 	
-	def predict_gen(self, net, trainloader, DEVICE, batch_size=16):
+	def predict_gen(self, net, trainloader, DEVICE, batch_size):
 		new_pairs = []
 		net.eval()  # Set the model to evaluation mode
 		net.to(DEVICE)
@@ -865,7 +865,7 @@ class LatentGenerativeReplay(nn.Module):
 		new_data_loader = DataLoader(new_data, batch_size=batch_size, shuffle=True, drop_last=True)
 		return new_data_loader
 	
-	def predict_from_gen(self, net, num_samples, DEVICE, batch_size=16):
+	def predict_from_gen(self, net, num_samples, DEVICE, batch_size):
 		new_pairs = []
 		net.eval()  # Set the model to evaluation mode
 		net.to(DEVICE)
@@ -881,7 +881,7 @@ class LatentGenerativeReplay(nn.Module):
 		new_data_loader = DataLoader(new_data, batch_size=batch_size, shuffle=True, drop_last=True)
 		return new_data_loader
 	
-	def predict_from_gen_gen(self, net, num_samples, DEVICE, batch_size=16):
+	def predict_from_gen_gen(self, net, num_samples, DEVICE, batch_size):
 		new_pairs = []
 		net.eval()  # Set the model to evaluation mode
 		net.to(DEVICE)
@@ -901,7 +901,7 @@ class LatentGenerativeReplay(nn.Module):
 		try:
 			current_task_reconstucted_data = torch.load(f'{self.path}/{self.client_id}_current_task_reconstucted_data.pth')
 		except:
-			current_task_reconstucted_data = self.predict_from_gen(self.generator, num_samples=len(new_data) * 16, DEVICE=self.Device, batch_size=16)
+			current_task_reconstucted_data = self.predict_from_gen(self.generator, num_samples=len(new_data) * self.config['batch_size'], DEVICE=self.Device, batch_size=self.config['batch_size'])
 			torch.save(current_task_reconstucted_data, f'{self.path}/{self.client_id}_current_task_reconstucted_data.pth')
 		# shuffle it with train_loader and return
 		# both are dataloaders
@@ -920,15 +920,15 @@ class LatentGenerativeReplay(nn.Module):
 		combined_dataset = ConcatDataset([dataset1, dataset2])
 		
 		# Create a DataLoader for the combined dataset with shuffling
-		combined_dataloader = DataLoader(combined_dataset, batch_size=16, shuffle=True)
+		combined_dataloader = DataLoader(combined_dataset, batch_size=self.config['batch_size'], shuffle=True)
 		return combined_dataloader
 	
 	def create_dataset_gen(self, new_data):
 		try:
 			current_task_reconstucted_data = torch.load(f'{self.path}/{self.client_id}_current_task_reconstucted_data_generator.pth')
 		except:
-			current_task_reconstucted_data = self.predict_from_gen_gen(self.generator, num_samples=len(new_data) * 16, DEVICE=self.Device,
-			                                                           batch_size=16)
+			current_task_reconstucted_data = self.predict_from_gen_gen(self.generator, num_samples=len(new_data) * self.config['batch_size'], DEVICE=self.Device,
+			                                                           batch_size=self.config['batch_size'])
 			torch.save(current_task_reconstucted_data, f'{self.path}/{self.client_id}_current_task_reconstucted_data_generator.pth')
 		# shuffle it with train_loader and return
 		# both are dataloaders
@@ -947,7 +947,7 @@ class LatentGenerativeReplay(nn.Module):
 		combined_dataset = ConcatDataset([dataset1, dataset2])
 		
 		# Create a DataLoader for the combined dataset with shuffling
-		combined_dataloader = DataLoader(combined_dataset, batch_size=16, shuffle=True)
+		combined_dataloader = DataLoader(combined_dataset, batch_size=self.config['batch_size'], shuffle=True)
 		return combined_dataloader
 	
 	def loss_function(self, recon_x, x, mu, logvar, input_dim):
@@ -965,7 +965,7 @@ class LatentGenerativeReplay(nn.Module):
 		self.generator.train()
 		self.generator.to(self.Device)
 		optimizer = torch.optim.Adam(self.generator.parameters(), lr=0.0001)
-		gen_train_data = predict_gen(self.model.conv_module, train_loader, self.Device, batch_size=16)
+		gen_train_data = predict_gen(self.model.conv_module, train_loader, self.Device, batch_size=self.config['batch_size'])
 		if task_count != 0:
 			gen_train_data = self.create_dataset_gen(gen_train_data)
 		tot = self.config['schedule'][-1]
@@ -986,7 +986,7 @@ class LatentGenerativeReplay(nn.Module):
 	def latent_creator(self, train_loader):
 		self.model.eval()
 		self.model.to(self.Device)
-		current_task_latent_data = predict(self.model.conv_module, train_loader, self.Device, batch_size=16)
+		current_task_latent_data = predict(self.model.conv_module, train_loader, self.Device, batch_size=self.config['batch_size'])
 		print(" ............................................................................ Learning LGR Data Mixed")
 		
 		final = self.create_dataset(current_task_latent_data)
