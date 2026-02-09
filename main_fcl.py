@@ -291,7 +291,7 @@ def run(args):
                             agent_config = {'lr': 0.001, 'momentum': 0.1, 'weight_decay': 0.01,
                                             'schedule': [int(args.epochs)], 'batch_size': args.batch_size,
                                             'model_type': 'mode', 'model_name': 'model', 'model_weights': '',
-                                            'out_dim': {'All': 8},
+                                            'out_dim': {'All': 9},
                                             'optimizer': 'Adam', 'print_freq': 0, 'gpuid': [gpu_flag],
                                             'memory_size': buffer_size, 'reg_coef': 0.01}
                             caller = NR
@@ -343,7 +343,7 @@ def run(args):
                             agent_config = {'lr': 0.0001, 'momentum': 0.1, 'weight_decay': 0.01,
                                             'schedule': [int(args.epochs)], 'batch_size': args.batch_size,
                                             'model_type': 'mode', 'model_name': 'model', 'model_weights': '',
-                                            'out_dim': {'All': 8}, 'optimizer':
+                                            'out_dim': {'All': 9}, 'optimizer':
                                                 'Adam', 'print_freq': 0, 'gpuid': [gpu_flag], 'reg_coef': coeff}
                             if strat_cl == 'EWC':
                                 caller = EWC
@@ -389,7 +389,7 @@ def run(args):
                             agent_config = {'lr': 0.0001, 'momentum': 0.1, 'weight_decay': 0.01,
                                             'schedule': [int(args.epochs)], 'batch_size': args.batch_size,
                                             'model_type': 'mode', 'model_name': 'model', 'model_weights': '',
-                                            'out_dim': {'All': 8},
+                                            'out_dim': {'All': 9},
                                             'optimizer': 'Adam', 'print_freq': 0, 'gpuid': [gpu_flag],
                                             'memory_size': buffer_size, 'reg_coef': 0.01}
                             caller = NR
@@ -423,7 +423,7 @@ def run(args):
                         agent_config = {'lr': 0.001, 'momentum': 0.1, 'weight_decay': 0.01,
                                         'schedule': [int(args.epochs)], 'batch_size': args.batch_size,
                                         'model_type': 'mode', 'model_name': 'model', 'model_weights': '',
-                                        'out_dim': {'All': 8},
+                                        'out_dim': {'All': 9},
                                         'optimizer': 'Adam', 'print_freq': 0, 'gpuid': [gpu_flag], 'reg_coef': 0.01}
 
                         caller = LatentGenerativeReplay
