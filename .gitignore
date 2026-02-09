@@ -166,3 +166,7 @@ venv
 #saved models
 *.pkl
 *.pth
+
+# input and output data
+Data/
+Output/
