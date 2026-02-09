@@ -890,7 +890,7 @@ class LatentGenerativeReplay(nn.Module):
 			for i in range(num_samples):
 				inputs = torch.randn(1, 64).to(DEVICE)
 				outputs = net.decode(inputs)
-				labels = self.model.fc_module(outputs)
+				# labels = self.model.fc_module(outputs)
 				for i in range(len(outputs)):
 					new_pairs.append((outputs[i], outputs[i]))
 		# batch_size = 16
