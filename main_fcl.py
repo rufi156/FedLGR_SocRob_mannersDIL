@@ -528,4 +528,6 @@ if __name__ == "__main__":
 
 # Run 30 rounds/6tasks - 5 rounds per task as per paper
 # adapted to use hdf5 datasets and run for each fold
-# python main_fcl.py -sfl FedRoot -scl LGR -m MobileNet -n 30 -e 10 -c 10 -f 10 -p Data/mean_data_pepper_fold0.hdf5 -o Output -a False -t cpu
+# In the original paper they run 10 clients and each client has ~40 training samples
+# on our dataset to get ~40 samples per client, we use 3 clients instead
+# python main_fcl.py -sfl FedRoot -scl LGR -m MobileNet -n 30 -e 10 -c 3 -f 3 -p Data/mean_data_pepper_fold0.hdf5 -o Output -a False -t cpu -x 8
